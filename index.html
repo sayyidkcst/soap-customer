@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#12392c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AyurGra">
+  <title>AyurGra | Ayurvedic Soap by KCST</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://yrvpfbsbbpfpkpnhzxyi.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script async id="sbjs" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green: #2f4b2f; --green-dark: #12392c; --green-mid: #1d5c43;
+      --gold: #d99a1c; --cream: #fbf9f4; --cream-2: #f2efe7;
+      --line: #e4dfd3; --ink: #1f2e1f; --muted: #62624f; --bad: #a33a2a;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--cream); color: #2a2a24;
+      line-height: 1.5; -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section[id], div[id] { scroll-margin-top: 90px; }
+
+    /* navbar */
+    .navbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0; flex-wrap: wrap; gap: 16px;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(251,249,244,.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid transparent; transition: border-color .2s;
+    }
+    .navbar.scrolled { border-bottom-color: var(--line); }
+    .logo { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.9rem; color: var(--green); letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+    .logo-img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; background: #fff; border: 1px solid var(--line); padding: 3px; display: none; }
+    .logo-img.show { display: block; }
+    .logo-txt span { color: #b48c5c; font-weight: 500; font-size: 1rem; font-family: 'Inter', sans-serif; margin-left: 6px; letter-spacing: .3px; }
+    .nav-links { display: flex; gap: 30px; font-weight: 500; }
+    .nav-links a { text-decoration: none; color: #3a3a30; font-size: .95rem; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #b48c5c; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--green); color: #fff; padding: 12px 28px; border-radius: 40px;
+      font-weight: 500; font-size: .95rem; text-decoration: none; cursor: pointer;
+      border: 1px solid var(--green); transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 6px 16px -8px rgba(47,75,47,.6); font-family: inherit;
+    }
+    .btn:hover { background: #1e331e; transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-outline { background: transparent; color: var(--green); box-shadow: none; }
+    .btn-outline:hover { background: var(--green); color: #fff; }
+    .btn-gold { background: linear-gradient(180deg, #e8b84f, var(--gold)); color: #2a1b00; border-color: #c98a12; box-shadow: 0 8px 20px -10px rgba(217,154,28,.7); }
+    .btn-gold:hover { filter: brightness(1.06); background: linear-gradient(180deg,#edc060,#d99a1c); }
+    .btn-sm { padding: 8px 18px; font-size: .85rem; }
+    .btn-icon { width: 42px; height: 42px; border-radius: 50%; padding: 0; background: none; color: var(--green); border: 1px solid #e2dcd0; box-shadow: none; position: relative; }
+    .btn-icon:hover { background: #f0ede6; transform: none; }
+    .cart-count {
+      position: absolute; top: -5px; right: -5px; background: var(--gold); color: #fff;
+      font-size: .68rem; min-width: 19px; height: 19px; line-height: 19px; border-radius: 10px;
+      text-align: center; display: none; font-weight: 700;
+    }
+    .menu-toggle { display: none; }
+
+    /* hero */
+    .hero { display: flex; align-items: center; gap: 64px; padding: 56px 0 96px; flex-wrap: wrap; }
+    .hero-content { flex: 1 1 400px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px; background: #e7e3d8;
+      color: #3d3d2e; padding: 7px 18px; border-radius: 30px; font-size: .78rem;
+      font-weight: 600; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 22px;
+    }
+    .badge::before { content: "✦"; color: var(--gold); }
+    .hero h1 {
+      font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 600;
+      line-height: 1.12; color: var(--ink); margin-bottom: 24px; letter-spacing: -.025em;
+    }
+    .hero h1 i { color: #b48c5c; font-style: normal; font-weight: 500; }
+    .hero p { font-size: 1.18rem; color: #4a4a3c; margin-bottom: 34px; max-width: 540px; }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .hero-meta { display: flex; gap: 30px; margin-top: 40px; flex-wrap: wrap; }
+    .hero-meta .stat strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--green); line-height: 1.1; }
+    .hero-meta .stat span { font-size: .76rem; color: #7a7a62; letter-spacing: .5px; text-transform: uppercase; }
+
+    .hero-image { flex: 1 1 460px; position: relative; display: flex; justify-content: center; align-items: center; min-height: 500px; padding: 40px; }
+    .hero-image::before {
+      content: ""; position: absolute; inset: 6% 4% 8% 6%;
+      background: radial-gradient(circle at 35% 30%, #f4efe3 0%, #e4dfd3 55%, #d9d2c2 100%);
+      border-radius: 50% 50% 46% 54% / 55% 45% 55% 45%;
+      box-shadow: inset 0 2px 40px rgba(255,255,255,.7), 0 40px 60px -30px rgba(60,50,30,.35);
+    }
+    .hero-image::after { content: "🌿"; font-size: 6rem; position: absolute; opacity: .12; bottom: 4%; right: 2%; transform: rotate(12deg); pointer-events: none; }
+    .hero-soap-img {
+      position: relative; z-index: 2; width: 100%; max-width: 560px; height: auto; object-fit: contain;
+      filter: drop-shadow(0 40px 40px rgba(50,40,20,.35)); animation: floaty 6s ease-in-out infinite;
+    }
+    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-14px) rotate(.5deg); } }
+    .hero-tag {
+      position: absolute; z-index: 3; bottom: 14%; left: 0;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+      border: 1px solid #e8e2d6; border-radius: 18px; padding: 12px 18px;
+      box-shadow: 0 16px 30px -14px rgba(60,50,30,.4); display: flex; align-items: center; gap: 12px;
+    }
+    .hero-tag .dot { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--green); color: #fff; font-size: .95rem; }
+    .hero-tag strong { display: block; font-size: .9rem; color: var(--ink); }
+    .hero-tag span { font-size: .75rem; color: #7a7a62; }
+
+    /* trust */
+    .trust-strip { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; padding: 40px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 80px; }
+    .trust-item { display: flex; align-items: center; gap: 12px; font-weight: 500; color: #3a4a3a; }
+    .trust-item i { font-size: 1.8rem; color: #b48c5c; }
+
+    /* section head */
+    .section-head { text-align: center; margin-bottom: 48px; }
+    .section-head h2 { font-family: 'Playfair Display', serif; font-size: 2.7rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; letter-spacing: -.02em; }
+    .section-head p { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: 1.08rem; }
+
+    /* products grid */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-bottom: 80px; }
+    .product-card {
+      background: #fff; border-radius: 28px; overflow: hidden; border: 1px solid #efeade;
+      box-shadow: 0 10px 30px -14px rgba(0,0,0,.08); transition: transform .25s, box-shadow .25s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 26px 44px -20px rgba(70,60,40,.22); }
+    .product-thumb {
+      aspect-ratio: 1/1; background: linear-gradient(160deg, #f5f1e7, #ebe4d4);
+      display: flex; align-items: center; justify-content: center; padding: 26px; overflow: hidden;
+    }
+    .product-thumb img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 20px 22px rgba(50,40,20,.25)); transition: transform .4s; }
+    .product-card:hover .product-thumb img { transform: scale(1.06) rotate(-1.5deg); }
+    .product-body { padding: 20px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+    .product-body .cat { font-size: .72rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #b48c5c; margin-bottom: 8px; }
+    .product-body h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .product-body .desc { font-size: .9rem; color: #5a5a48; margin-bottom: 12px; flex: 1; }
+    .product-body .price { font-size: 1.35rem; font-weight: 700; color: #b48c5c; margin-bottom: 14px; }
+    .product-body .price small { font-size: .8rem; font-weight: 400; color: #7a7a62; }
+    .product-body .stock-note { font-size: .8rem; margin-bottom: 12px; }
+    .stock-note.out { color: var(--bad); font-weight: 600; }
+    .stock-note.low { color: #b7791f; }
+    .product-body .add-btn { width: 100%; }
+    .products-empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); }
+    .products-empty i { font-size: 2rem; color: #b48c5c; margin-bottom: 12px; display: block; }
+
+    /* ingredients */
+    .ingredients { display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; margin-bottom: 90px; }
+    .ingredient-card {
+      background: #fff; border-radius: 30px; padding: 34px 26px; flex: 1 1 220px; max-width: 260px;
+      text-align: center; border: 1px solid #efeade; box-shadow: 0 10px 30px -14px rgba(0,0,0,.06);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .ingredient-card:hover { transform: translateY(-6px); box-shadow: 0 22px 40px -18px rgba(70,60,40,.16); }
+    .ingredient-icon { font-size: 2.6rem; margin: 0 auto 16px; display: grid; place-items: center; width: 74px; height: 74px; background: #f4f0e6; border-radius: 50%; }
+    .ingredient-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #2e3b2e; }
+    .ingredient-card p { font-size: .92rem; color: #5a5a48; }
+
+    /* story */
+    .company-section { background: linear-gradient(135deg, #f4f1e8, #eae4d6); border-radius: 44px; padding: 60px 46px; margin-bottom: 90px; display: flex; flex-wrap: wrap; align-items: center; gap: 44px; }
+    .company-text { flex: 2 1 320px; }
+    .company-text h3 { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
+    .company-text p { color: #424234; margin-bottom: 14px; font-size: 1.03rem; }
+    .company-badge { flex: 1 1 220px; background: #fff; border-radius: 36px; padding: 36px 24px; text-align: center; border: 1px solid #dbd4c5; box-shadow: 0 20px 40px -22px rgba(60,50,30,.3); }
+    .company-badge .kcst { font-weight: 700; font-size: 1.55rem; letter-spacing: 2px; color: var(--green); word-break: break-word; }
+    .company-badge .full { font-size: .82rem; color: #7a7a62; margin-top: 4px; letter-spacing: .5px; }
+    .company-badge .badge-lines { margin-top: 16px; font-size: .78rem; color: #5e6b4e; line-height: 1.6; word-break: break-word; }
+    .company-badge .badge-lines div { margin-top: 2px; }
+
+    /* contact */
+    .contact-section { display: flex; gap: 46px; flex-wrap: wrap; background: #fff; border-radius: 44px; padding: 52px; margin-bottom: 80px; border: 1px solid #e8e2d6; box-shadow: 0 24px 50px -34px rgba(60,50,30,.25); }
+    .contact-info { flex: 1 1 280px; }
+    .contact-info h3 { font-family: 'Playfair Display', serif; font-size: 2.1rem; color: var(--ink); margin-bottom: 16px; }
+    .contact-info p { color: #565643; margin-bottom: 12px; }
+    .contact-info a { color: var(--green); }
+    .contact-info .gst-line { font-size: .82rem; color: #7a7a62; margin-top: 14px; }
+    .contact-form { flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px; }
+    .contact-form input, .contact-form textarea { font-family: inherit; font-size: .95rem; padding: 13px 17px; border: 1px solid #ddd5c4; border-radius: 16px; background: var(--cream); }
+    .contact-form input:focus, .contact-form textarea:focus { outline: 2px solid #b48c5c; }
+    .form-msg { color: var(--green); font-weight: 500; display: none; }
+
+    /* footer */
+    .footer { padding: 52px 0 32px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
+    .footer-brand .logo { font-size: 1.8rem; margin-bottom: 10px; }
+    .footer-brand p { color: #63634f; font-size: .9rem; max-width: 300px; }
+    .footer-links { display: flex; gap: 56px; flex-wrap: wrap; }
+    .footer-links h4 { font-size: .85rem; text-transform: uppercase; letter-spacing: 1px; color: #5f5f4b; margin-bottom: 14px; font-weight: 600; }
+    .footer-links a { display: block; text-decoration: none; color: #3e3e30; margin-bottom: 9px; font-size: .9rem; transition: color .2s; }
+    .footer-links a:hover { color: #b48c5c; }
+    .footer-bottom { width: 100%; text-align: center; padding-top: 36px; font-size: .83rem; color: #8a8a74; border-top: 1px solid var(--line); margin-top: 20px; }
+
+    /* auth modal */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(30,40,30,.5); z-index: 300; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+    .modal-bg.open { display: flex; }
+    .modal { background: #fffdf8; border-radius: 30px; padding: 34px 30px 28px; width: 100%; max-width: 420px; position: relative; box-shadow: 0 30px 60px -20px rgba(0,0,0,.4); animation: pop .28s cubic-bezier(.2,.8,.3,1) both; }
+    @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+    .modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.6rem; color: #7a7a62; cursor: pointer; line-height: 1; }
+    .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: 4px; }
+    .modal .sub { font-size: .88rem; color: var(--muted); margin-bottom: 20px; }
+    .tabs { display: flex; background: #efeadd; border-radius: 30px; padding: 4px; margin-bottom: 20px; }
+    .tabs button { flex: 1; border: none; background: none; padding: 10px; border-radius: 26px; cursor: pointer; font-family: inherit; font-weight: 500; color: #4a4a3c; font-size: .9rem; transition: background .2s, color .2s; }
+    .tabs button.active { background: var(--green); color: #fff; }
+    .auth-form { display: none; flex-direction: column; gap: 12px; }
+    .auth-form.active { display: flex; }
+    .auth-form label { font-size: .82rem; color: var(--muted); margin-bottom: -6px; font-weight: 500; }
+    .auth-form input { font-family: inherit; font-size: .95rem; padding: 12px 16px; border: 1px solid #ddd5c4; border-radius: 14px; background: #fff; transition: border-color .15s, box-shadow .15s; }
+    .auth-form input:focus { outline: 0; border-color: var(--green); box-shadow: 0 0 0 3px rgba(47,75,47,.12); }
+    .auth-err { color: var(--bad); font-size: .85rem; min-height: 1.1em; }
+    .auth-info { background: #e3f0e8; border: 1px solid #cfe2d6; border-radius: 14px; padding: 11px 14px; font-size: .82rem; color: #2b5a3d; line-height: 1.45; }
+    .auth-info b { color: #12392c; }
+
+    /* dashboard */
+    .dash-bg { display: none; position: fixed; inset: 0; background: rgba(30,40,30,.5); z-index: 250; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+    .dash-bg.open { display: flex; }
+    .dash { background: #fffdf8; border-radius: 30px; width: 100%; max-width: 940px; height: min(660px, 92vh); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0,0,0,.4); animation: pop .28s cubic-bezier(.2,.8,.3,1) both; }
+    .dash-head { display: flex; justify-content: space-between; align-items: center; padding: 20px 28px; border-bottom: 1px solid #e8e2d6; background: linear-gradient(135deg, #f4f1e8, #fffdf8); }
+    .dash-head h3 { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--ink); }
+    .dash-head .who { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    .dash-close { background: none; border: none; font-size: 1.7rem; color: #7a7a62; cursor: pointer; line-height: 1; }
+    .dash-main { display: flex; flex: 1; min-height: 0; }
+    .dash-tabs { width: 200px; padding: 18px 12px; border-right: 1px solid #e8e2d6; display: flex; flex-direction: column; gap: 6px; background: #fbf9f4; }
+    .dash-tabs button { text-align: left; border: none; background: none; padding: 12px 15px; border-radius: 14px; cursor: pointer; font-family: inherit; font-size: .92rem; font-weight: 500; color: #3a3a30; display: flex; align-items: center; gap: 10px; transition: background .15s, color .15s; }
+    .dash-tabs button i { width: 18px; text-align: center; font-size: 1rem; }
+    .dash-tabs button:hover { background: #f0ede6; }
+    .dash-tabs button.active { background: var(--green); color: #fff; }
+    .dash-body { flex: 1; padding: 24px 28px; overflow-y: auto; }
+    .dash-body h4 { font-size: 1.1rem; margin-bottom: 14px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+    .dash-body h4::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .empty { text-align: center; color: var(--muted); padding: 46px 10px; }
+    .empty i { font-size: 2rem; color: #b48c5c; margin-bottom: 12px; display: block; }
+    .empty .btn { margin-top: 14px; }
+    .row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #eee8da; flex-wrap: wrap; }
+    .row .grow { flex: 1 1 180px; min-width: 0; }
+    .row .muted, .muted { color: #7a7a62; font-size: .84rem; }
+    .cart-thumb { width: 64px; height: 64px; object-fit: contain; flex: 0 0 64px; background: #f2eee4; border-radius: 14px; padding: 6px; border: 1px solid #e8e2d6; }
+    .qty { display: inline-flex; align-items: center; gap: 9px; }
+    .qty button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd5c4; background: #fff; cursor: pointer; font-size: 1rem; display: grid; place-items: center; transition: background .15s; }
+    .qty button:hover { background: #f0ede6; }
+    .icon-btn { background: none; border: none; color: var(--bad); cursor: pointer; font-size: .9rem; font-family: inherit; padding: 6px; }
+    .btn-order { width: 100%; margin-top: 8px; padding: 15px 30px; font-size: 1rem; font-weight: 600; }
+    .total-line { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding: 16px 0 8px; color: var(--ink); }
+    .dash-body select, .dash-body input, .dash-body textarea { font-family: inherit; font-size: .93rem; padding: 11px 14px; border: 1px solid #ddd5c4; border-radius: 12px; background: #fff; width: 100%; margin-bottom: 10px; }
+    .dash-body select:focus, .dash-body input:focus, .dash-body textarea:focus { outline: 0; border-color: var(--green); box-shadow: 0 0 0 3px rgba(47,75,47,.12); }
+    .dash-body label { font-size: .82rem; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 500; }
+    .card { border: 1px solid #e8e2d6; border-radius: 18px; padding: 15px 17px; margin-bottom: 12px; background: #fff; }
+    .card .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+    .status { background: #e7e3d8; color: #3d3d2e; font-size: .72rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: .5px; }
+    .status.Pending { background: #fdecc8; color: #8a5a00; }
+    .status.Confirmed, .status.Delivered, .status.Settled { background: #d4ead9; color: #1f5a34; }
+    .status.Cancelled, .status.Rejected { background: #f3d5d2; color: #a33a2a; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+    .dash-err { color: var(--bad); font-size: .85rem; margin-bottom: 10px; min-height: 1.1em; }
+    .ledger-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee8da; font-size: .9rem; gap: 10px; }
+    .ledger-row .dr { color: #a33a2a; }
+    .ledger-row .cr { color: #1f5a34; }
+    .bal-chip { display: inline-block; padding: 6px 14px; border-radius: 30px; font-size: .85rem; font-weight: 600; }
+    .bal-chip.due { background: #f3d5d2; color: #a33a2a; }
+    .bal-chip.ok { background: #d4ead9; color: #1f5a34; }
+    .addr-line { font-size: .9rem; line-height: 1.5; }
+
+    /* toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green-dark); color: #fff; padding: 12px 24px; border-radius: 30px; opacity: 0; transition: all .3s; z-index: 400; font-size: .92rem; box-shadow: 0 14px 30px -12px rgba(18,57,44,.7); max-width: 90vw; text-align: center; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.err { background: #a33a2a; box-shadow: 0 14px 30px -12px rgba(163,58,42,.7); }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .hero h1 { font-size: 3rem; }
+      .hero-image { min-height: 400px; }
+    }
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 2.35rem; }
+      .hero { gap: 36px; padding: 30px 0 60px; }
+      .hero-image { min-height: 320px; padding: 20px; }
+      .hero-tag { position: static; margin: 18px auto 0; width: fit-content; }
+      .nav-links { display: none; width: 100%; flex-direction: column; gap: 12px; order: 5; padding: 10px 0 6px; border-top: 1px solid var(--line); margin-top: 8px; }
+      .nav-links.open { display: flex; }
+      .menu-toggle { display: inline-flex; }
+      .section-head h2 { font-size: 2rem; }
+      .company-section { padding: 32px 22px; }
+      .contact-section { padding: 26px 20px; }
+      .dash-main { flex-direction: column; }
+      .dash-tabs { width: 100%; flex-direction: row; border-right: none; border-bottom: 1px solid #e8e2d6; padding: 10px; overflow-x: auto; background: #fbf9f4; }
+      .dash-tabs button { white-space: nowrap; padding: 10px 14px; }
+      .dash-body { padding: 18px; }
+      .grid2 { grid-template-columns: 1fr; }
+      .dash { height: min(700px, 94vh); border-radius: 24px; }
+      .footer-links { gap: 36px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- NAV -->
+    <nav class="navbar" id="topNav">
+      <div class="logo">
+        <img class="logo-img" id="brandLogo" alt="">
+        <span class="logo-txt" id="brandName">AyurGra <span>by KCST</span></span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#soaps">Soaps</a>
+        <a href="#ingredients">Ingredients</a>
+        <a href="#story">Our Story</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="#soaps" class="btn btn-outline btn-sm" style="display:none" id="shopNowBtn">Shop now</a>
+        <div class="user-wrap" style="position:relative">
+          <button class="btn btn-icon" id="userBtn" aria-label="Account"><i class="fas fa-user"></i></button>
+          <div class="user-menu" id="userMenu" style="display:none;position:absolute;right:0;top:50px;background:#fff;border:1px solid #e8e2d6;border-radius:16px;box-shadow:0 12px 30px -10px rgba(0,0,0,.2);padding:14px;min-width:200px;z-index:150">
+            <div class="who" id="userWho" style="font-size:.82rem;color:var(--muted);margin-bottom:10px;word-break:break-all"></div>
+            <button class="btn btn-sm" id="menuDash" style="width:100%;margin-bottom:8px">My account</button>
+            <button class="btn btn-outline btn-sm" id="logoutBtn" style="width:100%">Log out</button>
+          </div>
+        </div>
+        <button class="btn btn-icon" id="cartBtn" aria-label="Cart">
+          <i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="btn btn-icon menu-toggle" id="menuToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <div class="badge" id="heroBadge">Ayurvedic · Handcrafted</div>
+        <h1 id="heroHeading">Pure Ayurveda <br>in every <i>bath</i></h1>
+        <p id="heroPara">AyurGra soaps are crafted with time-honored herbs and cold-pressed oils — gentle on skin, kind to nature. Made by KCST INDIA LIMITED.</p>
+        <div class="hero-cta">
+          <a href="#soaps" class="btn">Explore soaps</a>
+          <a href="#story" class="btn btn-outline">Our story</a>
+        </div>
+        <div class="hero-meta">
+          <div class="stat"><strong>25+</strong><span>Years of trust</span></div>
+          <div class="stat"><strong>100%</strong><span>Natural herbs</span></div>
+          <div class="stat"><strong>0</strong><span>Animal testing</span></div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img class="hero-soap-img" id="heroImg"
+             src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhshyDH611KlIpHxyK4MvQr_uSQVkQ0VJ3UCoxYwRJwXnis8drDG65lMV8NDv74uJxX5sloxam-OzKcVmL3mUnTEqvSrAnzXTbprSVKBjQe3HlVusnh-KIJq33z7TfpMYs9z3TIHxSHiGObKD8mUyk1bFnuLbnm-3ZuRrvLCmEJo4v5JCKFa0HrI5yvbUI0/s320/Soap%201.png"
+             alt="AyurGra Ayurvedic soap bar" loading="eager">
+        <div class="hero-tag">
+          <div class="dot"><i class="fas fa-leaf"></i></div>
+          <div>
+            <strong>Turmeric &amp; Aloe Vera</strong>
+            <span>Signature Ayurvedic bar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST -->
+    <div class="trust-strip" id="sustainability">
+      <div class="trust-item"><i class="fas fa-leaf"></i> 100% natural herbs</div>
+      <div class="trust-item"><i class="fas fa-hand-holding-heart"></i> Cruelty-free</div>
+      <div class="trust-item"><i class="fas fa-recycle"></i> Eco-friendly packaging</div>
+      <div class="trust-item"><i class="fas fa-flask"></i> No parabens / SLS</div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="section-head" id="soaps">
+      <h2>Our soaps</h2>
+      <p>Handcrafted in small batches. Live stock from the shop — order online and pay on delivery or after confirmation.</p>
+    </div>
+    <div id="productsArea">
+      <div class="products-grid" id="productsGrid">
+        <div class="products-empty"><i class="fas fa-spinner fa-spin"></i><p>Loading products…</p></div>
+      </div>
+    </div>
+
+    <!-- INGREDIENTS -->
+    <div class="section-head" id="ingredients">
+      <h2>Ayurvedic wisdom, modern care</h2>
+      <p>Each bar is a blend of potent botanicals traditionally used in Ayurveda for healthy, glowing skin.</p>
+    </div>
+    <div class="ingredients">
+      <div class="ingredient-card"><span class="ingredient-icon">🌿</span><h3>Neem</h3><p>Purifying and antibacterial — helps calm blemishes and soothe irritation.</p></div>
+      <div class="ingredient-card"><span class="ingredient-icon">🧡</span><h3>Turmeric</h3><p>Brightening and antioxidant-rich, for a natural, even-toned complexion.</p></div>
+      <div class="ingredient-card"><span class="ingredient-icon">🌱</span><h3>Aloe Vera</h3><p>Deeply hydrating and cooling — perfect for sensitive or dry skin.</p></div>
+      <div class="ingredient-card"><span class="ingredient-icon">🌸</span><h3>Sandalwood</h3><p>Soothing and aromatic, it helps retain moisture and calm the senses.</p></div>
+    </div>
+
+    <!-- STORY -->
+    <div class="company-section" id="story">
+      <div class="company-text">
+        <h3 id="storyHeading">From the house of KCST</h3>
+        <p id="storyPara1"><strong>KCST Essentials LLP</strong> brings decades of expertise in crafting quality personal care products. AyurGra is our tribute to India's timeless Ayurvedic heritage — combining traditional recipes with modern skincare science.</p>
+        <p id="storyPara2">Every AyurGra soap is made in small batches to preserve the efficacy of herbs, and we never test on animals. Gentle for daily use, for all skin types.</p>
+        <a href="#contact" class="btn btn-outline" style="margin-top:8px">Know more about us</a>
+      </div>
+      <div class="company-badge">
+        <div class="kcst" id="badgeName">KCST Essentials LLP</div>
+        <div class="full" id="badgePhone">+91 96 333 151 77</div>
+        <div class="badge-lines" id="badgeLines">
+          <div>Since 1998 · Trusted quality</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="contact-section" id="contact">
+      <div class="contact-info">
+        <h3>Get in touch</h3>
+        <p id="contactIntro">Questions about AyurGra, bulk orders or stockists? Drop us a message and our team will get back to you.</p>
+        <p id="contactAddrRow" style="display:none"><i class="fas fa-map-marker-alt"></i> <span id="contactAddr"></span></p>
+        <p id="contactEmailRow"><i class="fas fa-envelope"></i> <a id="contactEmail" href="mailto:info@kcstessentials.com">hello@kcst.example</a></p>
+        <p id="contactPhoneRow"><i class="fas fa-phone"></i> <a id="contactPhone" href="tel:+919633315177">+91 96 333 151 77</a></p>
+        <p id="contactWaRow" style="display:none"><i class="fab fa-whatsapp"></i> <a id="contactWa" href="#" target="_blank" rel="noopener">WhatsApp customer care</a></p>
+        <div class="gst-line" id="contactGst" style="display:none"></div>
+        <div class="gst-line" id="contactFssai" style="display:none"></div>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <input type="text" id="cName" placeholder="Your name" required>
+        <input type="email" id="cEmail" placeholder="Email address" required>
+        <textarea id="cMsg" rows="4" placeholder="Your message" required></textarea>
+        <button type="submit" class="btn">Send message</button>
+        <div class="form-msg" id="formMsg">Thank you! We'll be in touch soon.</div>
+      </form>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-brand">
+        <div class="logo" style="font-size:1.8rem">
+          <img class="logo-img" id="footLogo" alt="">
+          <span class="logo-txt" id="footName">AyurGra</span>
+        </div>
+        <p id="footTag">Ayurvedic soaps handcrafted with care by KCST INDIA LIMITED.</p>
+        <p style="margin-top:12px;font-size:.85rem">🌿 100% vegetarian · Cruelty-free</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Shop</h4>
+          <a href="#soaps">All soaps</a>
+          <a href="#ingredients">Ingredients</a>
+          <a href="#story">Our story</a>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <a href="#story">About</a>
+          <a href="#sustainability">Sustainability</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div>
+          <h4>Follow</h4>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Instagram</a>
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener"><i class="fab fa-facebook"></i> Facebook</a>
+          <a id="footWa" href="https://wa.me/919074415177" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        </div>
+      </div>
+      <div class="footer-bottom" id="footCopyright">© 2025 KCST INDIA LIMITED. AyurGra is a trademark of KCST. All rights reserved.</div>
+    </footer>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div class="modal-bg" id="authModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Login or register">
+      <button class="modal-close" id="authClose" aria-label="Close">&times;</button>
+      <h3 id="authTitle">Welcome back</h3>
+      <p class="sub" id="authSub">Sign in with the mobile number registered with your shop.</p>
+      <div class="tabs">
+        <button type="button" class="active" data-tab="login">Login</button>
+        <button type="button" data-tab="register">Register</button>
+      </div>
+      <form class="auth-form active" id="loginForm">
+        <label>Mobile number</label>
+        <input type="tel" id="lPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required autocomplete="username">
+        <label>Password</label>
+        <input type="password" id="lPass" placeholder="Password" required autocomplete="current-password">
+        <div class="auth-err" id="lErr"></div>
+        <button type="submit" class="btn" id="lSubmit">Login</button>
+        <div class="auth-info">
+          <b>Shop customer?</b> Use the mobile number your shop registered with AyurGra and the password they gave you. Forgot it? Ask the shop to reset it.
+        </div>
+      </form>
+      <form class="auth-form" id="registerForm">
+        <label>Full name</label>
+        <input type="text" id="rName" placeholder="Your name" required autocomplete="name">
+        <label>Mobile number</label>
+        <input type="tel" id="rPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required autocomplete="tel">
+        <label>Password</label>
+        <input type="password" id="rPass" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password">
+        <label>Confirm password</label>
+        <input type="password" id="rPass2" placeholder="Confirm password" minlength="6" required autocomplete="new-password">
+        <div class="auth-err" id="rErr"></div>
+        <button type="submit" class="btn" id="rSubmit">Create account</button>
+        <div class="auth-info">
+          <b>Heads up:</b> AyurGra is a B2B shop. A self-registered account can browse and place an order, but the shop needs to link your number to a customer record before invoices show on your ledger. Contact the shop to get fully set up.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dash-bg" id="dashModal">
+    <div class="dash" role="dialog" aria-modal="true" aria-label="My account">
+      <div class="dash-head">
+        <div>
+          <h3 id="dashHello">My account</h3>
+          <div class="who" id="dashWho"></div>
+        </div>
+        <button class="dash-close" id="dashClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="dash-main">
+        <div class="dash-tabs" id="dashTabs">
+          <button data-dtab="cart"><i class="fas fa-shopping-cart"></i> Cart</button>
+          <button data-dtab="orders"><i class="fas fa-box"></i> Orders</button>
+          <button data-dtab="ledger"><i class="fas fa-book"></i> Ledger</button>
+          <button data-dtab="address"><i class="fas fa-map-marker-alt"></i> Addresses</button>
+          <button data-dtab="profile"><i class="fas fa-user"></i> Profile</button>
+        </div>
+        <div class="dash-body" id="dashBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ============================ CONFIG ============================ */
+    const SUP_URL = 'https://yrvpfbsbbpfpkpnhzxyi.supabase.co';
+    const SUP_KEY = 'sb_publishable_8JL0NpLprDRGpJu5sMw61Q_mPM-MimE';
+    const IMG_FALLBACK = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhshyDH611KlIpHxyK4MvQr_uSQVkQ0VJ3UCoxYwRJwXnis8drDG65lMV8NDv74uJxX5sloxam-OzKcVmL3mUnTEqvSrAnzXTbprSVKBjQe3HlVusnh-KIJq33z7TfpMYs9z3TIHxSHiGObKD8mUyk1bFnuLbnm-3ZuRrvLCmEJo4v5JCKFa0HrI5yvbUI0/s320/Soap%201.png';
+    const SESSION_KEY = 'ayurgra_cust_session';
+    const CO_KEY = 'ayurgra_company'; // cached company info
+
+    /* ============================ HELPERS ============================ */
+    const $ = (s, r) => (r || document).querySelector(s);
+    const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+    const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const nf = n => (+n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    const money = n => '₹ ' + nf(Math.round((+n || 0) * 100) / 100);
+    const dig10 = t => String(t || '').replace(/\D/g, '').slice(-10);
+    const today = () => new Date().toLocaleDateString('en-IN');
+    const isoDate = () => {
+      const d = new Date();
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    };
+
+    function toast(msg, isErr) {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.toggle('err', !!isErr);
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    async function sha256(text) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    /* ============================ SUPABASE ============================ */
+    let sb = null;
+    const sbReady = new Promise(resolve => {
+      if (window.supabase) return resolve(window.supabase);
+      const s = document.getElementById('sbjs');
+      s.addEventListener('load', () => resolve(window.supabase));
+      s.addEventListener('error', () => resolve(null));
+      setTimeout(() => resolve(window.supabase || null), 15000);
+    }).then(lib => {
+      if (lib) sb = lib.createClient(SUP_URL, SUP_KEY, { auth: { persistSession: false } });
+      return sb;
+    });
+
+    /* ============================ STATE ============================ */
+    let ME = null;
+    let PRODUCTS = [];
+    let GUEST_CART = [];
+    let PROD_META = {};
+    let COMPANY = {
+      name: 'AyurGra', tag: 'Ayurvedic & herbal products', addr: '', phone: '',
+      email: '', gst: '', fssai: '', bank: '', branch: '', acno: '', ifsc: '', qr: '', logo: ''
+    };
+
+    const dataKey = () => 'ayurgra_cust_' + (ME ? dig10(ME.phone) : 'guest');
+    function loadJSON(k, fb) { try { return JSON.parse(localStorage.getItem(k)) || fb; } catch (e) { return fb; } }
+    function saveJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+
+    function getStore() {
+      const k = dataKey();
+      const s = loadJSON(k, {});
+      s.cart = s.cart || [];
+      s.addresses = s.addresses || [];
+      return s;
+    }
+    function setStore(s) { saveJSON(dataKey(), s); }
+    function cart() { return ME ? getStore().cart : GUEST_CART; }
+    function cartQty() { return cart().reduce((n, i) => n + (+i.qty || 0), 0); }
+    function cartTotal() { return cart().reduce((n, i) => n + (+i.qty || 0) * (+i.price || 0), 0); }
+
+    /* ============================ COMPANY (from DB) ============================ */
+    const waNumber = phone => String(phone || '').replace(/\D/g, '').replace(/^0+/, '');
+
+    async function loadCompany() {
+      // paint cached first for instant feedback
+      const cached = loadJSON(CO_KEY, null);
+      if (cached) { COMPANY = Object.assign(COMPANY, cached); applyCompany(); }
+      if (!sb) return;
+      try {
+        // Try the company row for this app. The office panel uses id = company_id (default 1).
+        const r = await sb.from('company').select('*').order('id', { ascending: true }).limit(1).maybeSingle();
+        if (r.error) {
+          // Table might not exist; keep cached / defaults
+          return;
+        }
+        if (r.data) {
+          COMPANY = Object.assign(COMPANY, {
+            name: r.data.name || COMPANY.name,
+            tag: r.data.tag || COMPANY.tag,
+            addr: r.data.addr || '',
+            phone: r.data.phone || '',
+            email: r.data.email || '',
+            gst: r.data.gst || '',
+            fssai: r.data.fssai || '',
+            bank: r.data.bank || '',
+            branch: r.data.branch || '',
+            acno: r.data.acno || '',
+            ifsc: r.data.ifsc || '',
+            qr: r.data.qr || '',
+            logo: r.data.logo || ''
+          });
+          saveJSON(CO_KEY, COMPANY);
+          applyCompany();
+        }
+      } catch (_) { /* offline: keep cached */ }
+    }
+
+    function applyCompany() {
+      // nav / footer brand
+      const nameShort = COMPANY.name || 'AyurGra';
+      const byMatch = String(COMPANY.tag || '').match(/by\s+(.+)$/i);
+      const byLine = byMatch ? ' by ' + byMatch[1] : '';
+      $('#brandName').innerHTML = esc(nameShort) + (byLine ? ` <span>${esc(byLine)}</span>` : '');
+      $('#footName').textContent = nameShort;
+
+      // logo (if provided in DB)
+      if (COMPANY.logo) {
+        ['#brandLogo', '#footLogo'].forEach(sel => {
+          const el = $(sel); if (!el) return;
+          el.src = COMPANY.logo;
+          el.classList.add('show');
+          el.alt = nameShort;
+        });
+      } else {
+        ['#brandLogo', '#footLogo'].forEach(sel => {
+          const el = $(sel); if (el) el.classList.remove('show');
+        });
+      }
+
+      // hero copy
+      $('#heroBadge').textContent = (COMPANY.tag || 'Ayurvedic · Handcrafted').split(/[·|,]/)[0].trim() + ' · Handcrafted';
+      $('#heroPara').textContent = `${nameShort} soaps are crafted with time-honored herbs and cold-pressed oils — gentle on skin, kind to nature. Made by ${nameShort}.`;
+
+      // story
+      $('#storyHeading').textContent = 'From the house of ' + nameShort;
+      $('#storyPara1').innerHTML = `<strong>${esc(nameShort)}</strong> brings decades of expertise in crafting quality personal care products. AyurGra is our tribute to India's timeless Ayurvedic heritage — combining traditional recipes with modern skincare science.`;
+      $('#storyPara2').textContent = `Every ${nameShort} soap is made in small batches to preserve the efficacy of herbs, and we never test on animals. Gentle for daily use, for all skin types.`;
+
+      // badge
+      $('#badgeName').textContent = nameShort;
+      $('#badgePhone').textContent = COMPANY.phone || '';
+      const lines = [];
+      if (COMPANY.addr) lines.push(esc(COMPANY.addr));
+      if (COMPANY.gst) lines.push('GSTIN: ' + esc(COMPANY.gst));
+      if (COMPANY.fssai) lines.push('FSSAI: ' + esc(COMPANY.fssai));
+      if (!lines.length) lines.push('Trusted quality');
+      $('#badgeLines').innerHTML = lines.map(l => `<div>${l}</div>`).join('');
+
+      // contact
+      if (COMPANY.addr) {
+        $('#contactAddr').textContent = COMPANY.addr;
+        $('#contactAddrRow').style.display = '';
+      } else $('#contactAddrRow').style.display = 'none';
+
+      if (COMPANY.email) {
+        $('#contactEmail').textContent = COMPANY.email;
+        $('#contactEmail').href = 'mailto:' + COMPANY.email;
+        $('#contactEmailRow').style.display = '';
+      } else $('#contactEmailRow').style.display = 'none';
+
+      if (COMPANY.phone) {
+        $('#contactPhone').textContent = COMPANY.phone;
+        $('#contactPhone').href = 'tel:' + waNumber(COMPANY.phone);
+        $('#contactPhoneRow').style.display = '';
+      } else $('#contactPhoneRow').style.display = 'none';
+
+      if (COMPANY.phone) {
+        const wa = waNumber(COMPANY.phone);
+        if (wa.length >= 10) {
+          $('#contactWa').href = 'https://wa.me/' + wa;
+          $('#contactWaRow').style.display = '';
+          $('#footWa').href = 'https://wa.me/' + wa;
+        } else {
+          $('#contactWaRow').style.display = 'none';
+        }
+      } else $('#contactWaRow').style.display = 'none';
+
+      if (COMPANY.gst) {
+        $('#contactGst').textContent = 'GSTIN: ' + COMPANY.gst;
+        $('#contactGst').style.display = '';
+      } else $('#contactGst').style.display = 'none';
+
+      if (COMPANY.fssai) {
+        $('#contactFssai').textContent = 'FSSAI license: ' + COMPANY.fssai;
+        $('#contactFssai').style.display = '';
+      } else $('#contactFssai').style.display = 'none';
+
+      // footer copyright
+      $('#footCopyright').textContent = `© ${new Date().getFullYear()} ${nameShort}. All rights reserved.`;
+      $('#footTag').textContent = `Ayurvedic soaps handcrafted with care by ${nameShort}.`;
+    }
+
+    /* ============================ HEADER ============================ */
+    function refreshHeader() {
+      const q = cartQty();
+      const cc = $('#cartCount');
+      cc.textContent = q;
+      cc.style.display = q ? 'block' : 'none';
+      if (ME) {
+        $('#userWho').textContent = ME.name + ' · ' + ME.phone;
+        $('#dashWho').textContent = ME.name + ' · ' + ME.phone;
+        $('#dashHello').textContent = 'Hello, ' + (ME.name || 'there').split(' ')[0];
+      } else {
+        $('#userMenu').style.display = 'none';
+      }
+    }
+
+    $('#userBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      if (ME) {
+        const m = $('#userMenu');
+        m.style.display = m.style.display === 'none' ? 'block' : 'none';
+      } else openAuth('login');
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#userBtn') && !e.target.closest('#userMenu')) $('#userMenu').style.display = 'none';
+    });
+    $('#menuDash').addEventListener('click', () => { $('#userMenu').style.display = 'none'; openDash('cart'); });
+    $('#logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem(SESSION_KEY); ME = null;
+      refreshHeader(); closeDash(); toast('You have been logged out');
+    });
+    $('#cartBtn').addEventListener('click', () => {
+      if (!cartQty()) return toast('Your cart is empty');
+      openDash('cart');
+    });
+    $('#menuToggle').addEventListener('click', () => $('#navLinks').classList.toggle('open'));
+    $$('#navLinks a').forEach(a => a.addEventListener('click', () => $('#navLinks').classList.remove('open')));
+    window.addEventListener('scroll', () => $('#topNav').classList.toggle('scrolled', window.scrollY > 8), { passive: true });
+
+    /* ============================ AUTH ============================ */
+    const authModal = $('#authModal');
+    function openAuth(tab) {
+      switchAuthTab(tab || 'login');
+      authModal.classList.add('open');
+      setTimeout(() => { const f = tab === 'register' ? $('#rName') : $('#lPhone'); if (f) f.focus(); }, 80);
+    }
+    function closeAuth() { authModal.classList.remove('open'); }
+    function switchAuthTab(tab) {
+      $$('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      $('#loginForm').classList.toggle('active', tab === 'login');
+      $('#registerForm').classList.toggle('active', tab === 'register');
+      $('#lErr').textContent = '';
+      $('#rErr').textContent = '';
+    }
+    $('#authClose').addEventListener('click', closeAuth);
+    authModal.addEventListener('click', e => { if (e.target === authModal) closeAuth(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuth(); });
+    $$('.tabs button').forEach(b => b.addEventListener('click', () => switchAuthTab(b.dataset.tab)));
+
+    $('#loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const phone = dig10($('#lPhone').value);
+      const pass = $('#lPass').value;
+      const err = $('#lErr');
+      err.textContent = '';
+      if (phone.length !== 10) return (err.textContent = 'Enter the full 10-digit mobile number.');
+      if (!pass) return (err.textContent = 'Enter your password.');
+      const btn = $('#lSubmit');
+      btn.disabled = true; btn.textContent = 'Signing in…';
+      try {
+        const ok = await signIn(phone, pass);
+        if (!ok) return;
+        closeAuth(); e.target.reset();
+        await loadProducts();
+        renderProducts();
+        refreshHeader();
+        const guest = GUEST_CART.slice();
+        if (guest.length) {
+          const s = getStore();
+          guest.forEach(g => {
+            const f = s.cart.find(x => x.id === g.id);
+            if (f) f.qty += g.qty; else s.cart.push(g);
+          });
+          GUEST_CART = []; setStore(s); refreshHeader();
+        }
+        toast('Welcome, ' + (ME.name || 'there').split(' ')[0] + '!');
+        openDash('cart');
+      } finally { btn.disabled = false; btn.textContent = 'Login'; }
+    });
+
+    $('#registerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = $('#rName').value.trim();
+      const phone = dig10($('#rPhone').value);
+      const pass = $('#rPass').value;
+      const pass2 = $('#rPass2').value;
+      const err = $('#rErr');
+      err.textContent = '';
+      if (!name) return (err.textContent = 'Enter your name.');
+      if (phone.length !== 10) return (err.textContent = 'Enter the full 10-digit mobile number.');
+      if (pass.length < 6) return (err.textContent = 'Password must be at least 6 characters.');
+      if (pass !== pass2) return (err.textContent = 'Passwords do not match.');
+      const btn = $('#rSubmit');
+      btn.disabled = true; btn.textContent = 'Creating…';
+      try {
+        if (!sb) throw new Error('Could not reach the server. Check your internet connection.');
+        const dup = await sb.from('accounts').select('id').eq('phone', phone).maybeSingle();
+        if (dup.error) throw new Error('Could not check mobile number: ' + dup.error.message);
+        if (dup.data) throw new Error('An account with this mobile number already exists. Try logging in.');
+        const salt = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
+        const pw_hash = await sha256(salt + ':' + phone + ':' + pass);
+        let payload = { name, phone, category: 'Customer', salt, pw_hash };
+        let ins = await sb.from('accounts').insert(payload).select('id,name,phone,category').single();
+        if (ins.error && /company_id|email/i.test(ins.error.message)) {
+          try {
+            const co = await sb.from('companies').select('id').order('id', { ascending: true }).limit(1).maybeSingle();
+            if (co && co.data) payload.company_id = co.data.id;
+            ins = await sb.from('accounts').insert(payload).select('id,name,phone,category').single();
+          } catch (_) { }
+        }
+        if (ins.error) throw new Error(ins.error.message);
+        ME = { phone, name, category: 'Customer' };
+        saveJSON(SESSION_KEY, ME);
+        closeAuth(); e.target.reset();
+        await loadProducts();
+        renderProducts();
+        refreshHeader();
+        toast('Account created. Welcome, ' + name.split(' ')[0] + '!');
+        openDash('cart');
+      } catch (ex) {
+        err.textContent = ex.message || 'Registration failed.';
+      } finally { btn.disabled = false; btn.textContent = 'Create account'; }
+    });
+
+    async function signIn(phone, pass) {
+      if (!sb) { $('#lErr').textContent = 'Could not reach the server.'; return false; }
+      try {
+        const r = await sb.from('accounts').select('id,name,phone,category,salt,pw_hash').eq('phone', phone).maybeSingle();
+        if (r.error) throw new Error(r.error.message);
+        if (!r.data) { $('#lErr').textContent = 'No account uses that mobile number.'; return false; }
+        if ((r.data.category || 'Owner') !== 'Customer') {
+          $('#lErr').textContent = 'This login belongs to shop staff. Please use the shop panel, or contact the shop.';
+          return false;
+        }
+        const h = await sha256(r.data.salt + ':' + phone + ':' + pass);
+        if (h !== r.data.pw_hash) { $('#lErr').textContent = 'Incorrect password.'; return false; }
+        ME = { phone: r.data.phone, name: r.data.name, category: 'Customer' };
+        saveJSON(SESSION_KEY, ME);
+        return true;
+      } catch (ex) {
+        $('#lErr').textContent = ex.message || 'Login failed.';
+        return false;
+      }
+    }
+
+    /* ============================ PRODUCTS ============================ */
+    async function loadProducts() {
+      if (!sb) { renderProductsError('Could not reach the server.'); return; }
+      try {
+        const r = await sb.from('products').select('*').order('serial', { ascending: true }).order('id', { ascending: true });
+        if (r.error) throw new Error(r.error.message);
+        PRODUCTS = (r.data || []).filter(p => p.name);
+        await computeStock();
+      } catch (ex) { renderProductsError(ex.message || 'Could not load products.'); }
+    }
+
+    async function computeStock() {
+      PROD_META = {};
+      PRODUCTS.forEach(p => {
+        PROD_META[p.name] = { pcs: +p.pcs || 0, gst: +p.gst || 0, rate: +p.rate || 0, hsn: p.hsn || '', sold: 0, produced: 0 };
+      });
+      try {
+        const [prodR, ordR] = await Promise.all([
+          sb.from('production').select('product,qty'),
+          sb.from('orders').select('items,status')
+        ]);
+        if (!prodR.error) (prodR.data || []).forEach(row => {
+          const m = PROD_META[row.product]; if (m) m.produced += +row.qty || 0;
+        });
+        if (!ordR.error) (ordR.data || []).forEach(o => {
+          if (o.status === 'Cancelled') return;
+          (o.items || []).forEach(i => {
+            const m = PROD_META[i.p]; if (m) m.sold += ((+i.q || 0) - (+i.r || 0));
+          });
+        });
+      } catch (_) { }
+      PRODUCTS.forEach(p => {
+        const m = PROD_META[p.name];
+        if (m) m.stock = m.produced - m.sold;
+      });
+    }
+
+    function renderProductsError(msg) {
+      $('#productsGrid').innerHTML = `<div class="products-empty"><i class="fas fa-exclamation-circle"></i><p>${esc(msg)}</p><button class="btn btn-outline btn-sm" onclick="location.reload()">Retry</button></div>`;
+    }
+
+    function productImage(p) {
+      return p.image && (/^https?:/.test(p.image) || String(p.image).startsWith('data:'))
+        ? p.image : IMG_FALLBACK;
+    }
+
+    function renderProducts() {
+      const grid = $('#productsGrid');
+      if (!PRODUCTS.length) {
+        grid.innerHTML = `<div class="products-empty"><i class="fas fa-box-open"></i><p>No products are listed yet. Please check back soon.</p></div>`;
+        return;
+      }
+      grid.innerHTML = PRODUCTS.map(p => {
+        const meta = PROD_META[p.name] || {};
+        const stock = meta.stock == null ? null : meta.stock;
+        const price = +p.rate || 0;
+        const gst = +p.gst || 0;
+        const incl = price * (1 + gst / 100);
+        let stockNote = '';
+        if (stock != null) {
+          if (stock <= 0) stockNote = '<div class="stock-note out">Out of stock</div>';
+          else if (stock < 5) stockNote = `<div class="stock-note low">Only ${nf(stock)} left</div>`;
+          else stockNote = `<div class="stock-note" style="color:#1f5a34">${nf(stock)} in stock</div>`;
+        }
+        return `<div class="product-card">
+          <div class="product-thumb"><img src="${esc(productImage(p))}" alt="${esc(p.name)}" loading="lazy"></div>
+          <div class="product-body">
+            <div class="cat">Ayurvedic soap</div>
+            <h3>${esc(p.name)}</h3>
+            <div class="desc">${p.hsn ? 'HSN ' + esc(p.hsn) + ' · ' : ''}${p.pcs ? p.pcs + ' pcs / box · ' : ''}GST ${gst}%</div>
+            <div class="price">${money(incl)} <small>incl. GST</small></div>
+            ${stockNote}
+            <button class="btn add-btn" data-pid="${esc(p.id)}" ${stock === 0 ? 'disabled' : ''}>
+              <i class="fas fa-shopping-bag"></i> ${stock === 0 ? 'Out of stock' : 'Add to cart'}
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+      $$('.product-card .add-btn').forEach(btn => {
+        btn.addEventListener('click', () => addToCart(+btn.dataset.pid));
+      });
+    }
+
+    function addToCart(pid) {
+      const p = PRODUCTS.find(x => +x.id === pid);
+      if (!p) return;
+      const meta = PROD_META[p.name] || {};
+      if (meta.stock != null && meta.stock <= 0) return toast('This soap is out of stock', true);
+      const priceIncl = (+p.rate || 0) * (1 + (+p.gst || 0) / 100);
+      const line = { id: p.id, name: p.name, price: priceIncl, qty: 1, img: productImage(p) };
+      const items = cart();
+      const found = items.find(x => x.id === p.id);
+      if (found) {
+        if (meta.stock != null && found.qty + 1 > meta.stock) return toast('Only ' + nf(meta.stock) + ' in stock', true);
+        found.qty++;
+      } else items.push(line);
+      if (ME) { const s = getStore(); s.cart = items; setStore(s); } else { GUEST_CART = items; }
+      refreshHeader();
+      toast('Added to cart: ' + p.name);
+    }
+
+    /* ============================ DASHBOARD ============================ */
+    const dashModal = $('#dashModal');
+    let dashTab = 'cart';
+    function openDash(tab) {
+      if (!ME) return openAuth('login');
+      dashTab = tab || 'cart';
+      dashModal.classList.add('open');
+      renderDash();
+    }
+    function closeDash() { dashModal.classList.remove('open'); }
+    $('#dashClose').addEventListener('click', closeDash);
+    dashModal.addEventListener('click', e => { if (e.target === dashModal) closeDash(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDash(); });
+    $$('#dashTabs button').forEach(b => b.addEventListener('click', () => { dashTab = b.dataset.dtab; renderDash(); }));
+
+    async function renderDash() {
+      $$('#dashTabs button').forEach(b => b.classList.toggle('active', b.dataset.dtab === dashTab));
+      const body = $('#dashBody');
+      if (dashTab === 'cart') return (body.innerHTML = viewCart());
+      if (dashTab === 'orders') return (body.innerHTML = await viewOrders());
+      if (dashTab === 'ledger') return (body.innerHTML = await viewLedger());
+      if (dashTab === 'address') return (body.innerHTML = viewAddresses());
+      if (dashTab === 'profile') return (body.innerHTML = viewProfile());
+    }
+
+    function viewCart() {
+      const items = cart();
+      if (!items.length) {
+        return `<div class="empty"><i class="fas fa-shopping-cart"></i><p>Your cart is empty.</p><button class="btn" data-act="browse">Browse soaps</button></div>`;
+      }
+      let h = '<h4>Your cart</h4>';
+      items.forEach(i => {
+        h += `<div class="row">
+          <img class="cart-thumb" src="${esc(i.img || IMG_FALLBACK)}" alt="${esc(i.name)}">
+          <div class="grow"><strong>${esc(i.name)}</strong><div class="muted">${money(i.price)} each · incl. GST</div></div>
+          <div class="qty">
+            <button data-act="dec" data-id="${esc(i.id)}">&minus;</button>
+            <span>${i.qty}</span>
+            <button data-act="inc" data-id="${esc(i.id)}">+</button>
+          </div>
+          <strong style="min-width:76px;text-align:right">${money(i.price * i.qty)}</strong>
+          <button class="icon-btn" data-act="rm" data-id="${esc(i.id)}" title="Remove"><i class="fas fa-trash"></i></button>
+        </div>`;
+      });
+      h += `<div class="total-line"><span>Total</span><span>${money(cartTotal())}</span></div>`;
+      const s = getStore();
+      if (!s.addresses.length) {
+        h += `<div class="auth-info" style="margin-bottom:10px">Add a delivery address to place your order. <button class="btn btn-sm" data-act="toaddr" style="margin-left:8px">Add address</button></div>`;
+      } else {
+        h += `<label for="shipTo">Deliver to</label><select id="shipTo">${s.addresses.map((a, ix) => `<option value="${ix}">${esc(a.name + ' – ' + a.line + ', ' + a.city + ' ' + a.pin)}</option>`).join('')}</select>`;
+      }
+      h += `<label for="orderNote">Note (optional)</label><textarea id="orderNote" rows="2" placeholder="Any delivery instructions…"></textarea>`;
+      h += `<button class="btn btn-order" data-act="place"><i class="fas fa-shopping-bag"></i> Place order · ${money(cartTotal())}</button>`;
+      h += `<div class="muted" style="margin-top:8px;font-size:.8rem">Your order goes to the shop as <b>Pending</b>. The shop will confirm it and arrange delivery. Payment is arranged with the shop (cash / UPI on delivery or on account for registered shops).</div>`;
+      return h;
+    }
+
+    async function viewOrders() {
+      if (!sb) return '<div class="empty">Could not reach the server.</div>';
+      const s = getStore();
+      const customerName = s.customerName || ME.name;
+      const r = await sb.from('orders').select('*').eq('shop', customerName).order('id', { ascending: false }).limit(60);
+      if (r.error) return `<div class="empty">Could not load orders: ${esc(r.error.message)}</div>`;
+      const rows = r.data || [];
+      if (!rows.length) return `<div class="empty"><i class="fas fa-box"></i><p>No orders yet.</p></div>`;
+      return '<h4>Your orders</h4>' + rows.map(o => {
+        const items = (o.items || []).map(i => esc(i.p) + ' × ' + i.q).join('<br>');
+        const total = (o.items || []).reduce((n, i) => n + ((+i.q || 0) - (+i.r || 0)) * (+i.pr || 0), 0);
+        const withTax = total * (1 + (+o.taxp || 0) / 100);
+        return `<div class="card">
+          <div class="top"><strong>#${esc(o.no || o.id)}</strong><span class="status ${esc(o.status || 'Pending')}">${esc(o.status || 'Pending')}</span></div>
+          <div class="muted">${esc(o.date)}${o.by ? ' · ' + esc(o.by) : ''}</div>
+          <div style="margin:8px 0;font-size:.9rem">${items}</div>
+          <div style="font-weight:700">Total: ${money(withTax)}</div>
+          ${o.notes ? `<div class="muted" style="margin-top:4px">${esc(o.notes)}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    async function viewLedger() {
+      if (!sb) return '<div class="empty">Could not reach the server.</div>';
+      const s = getStore();
+      const customerName = s.customerName || ME.name;
+      const [ordR, payR] = await Promise.all([
+        sb.from('orders').select('*').eq('shop', customerName).neq('status', 'Pending').neq('status', 'Cancelled').order('id', { ascending: true }),
+        sb.from('payments').select('*').eq('cust', customerName).eq('status', 'Settled').order('id', { ascending: true })
+      ]);
+      if (ordR.error || payR.error) return `<div class="empty">Could not load ledger.</div>`;
+      const rows = [];
+      (ordR.data || []).forEach(o => {
+        const grossV = (o.items || []).reduce((n, i) => n + (+i.q || 0) * (+i.pr || 0), 0);
+        const disc = Math.min(+o.disc || 0, grossV);
+        const net = grossV - disc;
+        const tax = net * (+o.taxp || 0) / 100;
+        rows.push({ d: o.date, t: 'Invoice ' + (o.no || o.id), dr: net + tax, cr: 0 });
+      });
+      (payR.data || []).forEach(p => {
+        rows.push({ d: p.date, t: 'Payment (' + (p.mode || 'Cash') + ')' + (p.invoice ? ' · ' + p.invoice : ''), dr: 0, cr: +p.amount || 0 });
+        if (+p.discount) rows.push({ d: p.date, t: 'Cash discount', dr: 0, cr: +p.discount });
+      });
+      rows.sort((a, b) => (a.d > b.d ? 1 : a.d < b.d ? -1 : 0));
+      if (!rows.length) return `<div class="empty"><i class="fas fa-book"></i><p>No ledger entries yet. Your first invoice from the shop will show here.</p></div>`;
+      let bal = 0;
+      rows.forEach(r => { bal += r.dr - r.cr; r.bal = bal; });
+      return `<h4>Ledger · ${esc(customerName)}</h4>
+        <div style="margin-bottom:10px">Outstanding: <span class="bal-chip ${bal > 0 ? 'due' : 'ok'}">${money(Math.abs(bal))} ${bal > 0 ? 'due' : 'clear'}</span></div>
+        ${rows.map(r => `<div class="ledger-row"><div style="flex:1"><div>${esc(r.t)}</div><div class="muted">${esc(r.d)}</div></div><div style="text-align:right"><div class="${r.dr ? 'dr' : 'cr'}">${r.dr ? money(r.dr) : money(r.cr)} ${r.dr ? 'Dr' : 'Cr'}</div><div class="muted">Balance ${money(r.bal)}</div></div></div>`).join('')}
+        <div class="muted" style="margin-top:8px;font-size:.8rem">Debit = your invoices. Credit = payments received and cash discounts. Only confirmed/delivered invoices and settled payments are shown.</div>`;
+    }
+
+    function viewAddresses() {
+      const s = getStore();
+      let h = '<h4>Delivery addresses</h4>';
+      if (!s.addresses.length) h += '<p class="muted" style="margin-bottom:14px">No addresses saved yet.</p>';
+      s.addresses.forEach((a, ix) => {
+        h += `<div class="card">
+          <div class="top"><strong>${esc(a.name)}</strong><button class="icon-btn" data-act="deladdr" data-i="${ix}"><i class="fas fa-trash"></i> Remove</button></div>
+          <div class="addr-line">${esc(a.line)}<br>${esc(a.city)}, ${esc(a.state)} – ${esc(a.pin)}</div>
+          <div class="muted">Phone: ${esc(a.phone)}</div>
+        </div>`;
+      });
+      h += `<h4 style="margin-top:18px">Add new address</h4>
+        <form id="addrForm">
+          <div class="grid2">
+            <div><label>Full name</label><input name="name" required></div>
+            <div><label>Phone</label><input name="phone" required pattern="[0-9+ ]{8,15}" title="Enter a valid phone"></div>
+          </div>
+          <label>Address</label><input name="line" required placeholder="House / street / area">
+          <div class="grid2">
+            <div><label>City</label><input name="city" required></div>
+            <div><label>State</label><input name="state" required></div>
+          </div>
+          <label>PIN code</label><input name="pin" required pattern="[0-9]{6}" title="6-digit PIN">
+          <button type="submit" class="btn">Save address</button>
+        </form>`;
+      return h;
+    }
+
+    function viewProfile() {
+      const s = getStore();
+      return `<h4>My profile</h4>
+        <div class="card">
+          <div class="top"><strong>${esc(ME.name)}</strong><span class="status Confirmed">Customer</span></div>
+          <div class="muted">Mobile: ${esc(ME.phone)}</div>
+          ${s.customerName ? `<div class="muted">Linked to shop account: <b>${esc(s.customerName)}</b></div>` : `<div class="auth-info" style="margin-top:10px">Your mobile number is not yet linked to a customer record at the shop. Invoices will not appear on your ledger until the shop adds you. Contact customer care if needed.</div>`}
+        </div>
+        <button class="btn btn-outline" data-act="logout" style="width:100%">Log out</button>`;
+    }
+
+    $('#dashBody').addEventListener('click', async e => {
+      const t = e.target.closest('[data-act]');
+      if (!t) return;
+      const act = t.dataset.act, id = t.dataset.id;
+      const s = getStore();
+
+      if (act === 'browse') {
+        closeDash();
+        $('#soaps').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      if (act === 'inc' || act === 'dec' || act === 'rm') {
+        const items = ME ? s.cart : GUEST_CART;
+        const row = items.find(x => String(x.id) === String(id));
+        if (!row) return;
+        if (act === 'inc') {
+          const p = PRODUCTS.find(x => +x.id === +id);
+          const meta = p ? (PROD_META[p.name] || {}) : {};
+          if (meta.stock != null && row.qty + 1 > meta.stock) return toast('Only ' + nf(meta.stock) + ' in stock', true);
+          row.qty++;
+        }
+        if (act === 'dec') row.qty--;
+        const cleaned = items.filter(x => x.qty > 0);
+        if (ME) { s.cart = cleaned; setStore(s); } else { GUEST_CART = cleaned; }
+        refreshHeader();
+        return ($('#dashBody').innerHTML = viewCart());
+      }
+
+      if (act === 'deladdr') {
+        s.addresses.splice(+t.dataset.i, 1);
+        setStore(s);
+        return ($('#dashBody').innerHTML = viewAddresses());
+      }
+      if (act === 'toaddr') { dashTab = 'address'; renderDash(); return; }
+      if (act === 'logout') {
+        localStorage.removeItem(SESSION_KEY);
+        ME = null; refreshHeader(); closeDash();
+        toast('Logged out');
+        return;
+      }
+      if (act === 'place') {
+        if (!ME) return openAuth('login');
+        if (!s.addresses.length) { dashTab = 'address'; renderDash(); return toast('Add a delivery address first', true); }
+        const addr = s.addresses[+$('#shipTo').value];
+        if (!addr) return toast('Choose a delivery address', true);
+        const items = cart();
+        if (!items.length) return toast('Cart is empty', true);
+        const note = ($('#orderNote').value || '').trim();
+        t.disabled = true; t.textContent = 'Placing order…';
+        try {
+          const orderItems = items.map(i => {
+            const p = PRODUCTS.find(x => x.name === i.name);
+            const gst = p ? (+p.gst || 0) : 0;
+            const exGst = Math.round((i.price / (1 + gst / 100)) * 100) / 100;
+            return { p: i.name, q: +i.qty, pr: exGst, r: 0, g: gst };
+          });
+          const gross = orderItems.reduce((n, i) => n + i.q * i.pr, 0);
+          const taxp = gross ? orderItems.reduce((n, i) => n + i.q * i.pr * i.g, 0) / gross : 0;
+          const customerName = s.customerName || ME.name;
+          const addrText = addr.name + ', ' + addr.line + ', ' + addr.city + ', ' + addr.state + ' - ' + addr.pin;
+          const payload = {
+            date: isoDate(), agent: 'Customer', shop: customerName, items: orderItems,
+            disc: 0, taxp: Math.round(taxp * 100) / 100, status: 'Pending', due: '',
+            notes: 'Order placed by customer' + (note ? ' · ' + note : '') + ' · Deliver to: ' + addrText + ' · Phone: ' + addr.phone
+          };
+          const r = await sb.from('orders').insert(payload).select().single();
+          if (r.error) throw new Error(r.error.message);
+          if (ME) { s.cart = []; setStore(s); } else GUEST_CART = [];
+          refreshHeader();
+          toast('Order placed! The shop will confirm shortly.');
+          dashTab = 'orders';
+          renderDash();
+        } catch (ex) {
+          toast('Could not place order: ' + ex.message, true);
+          t.disabled = false; t.textContent = 'Place order · ' + money(cartTotal());
+        }
+      }
+    });
+
+    $('#dashBody').addEventListener('submit', async e => {
+      if (e.target.id !== 'addrForm') return;
+      e.preventDefault();
+      const f = e.target, s = getStore();
+      s.addresses.push({
+        name: f.name.value.trim(), phone: f.phone.value.trim(), line: f.line.value.trim(),
+        city: f.city.value.trim(), state: f.state.value.trim(), pin: f.pin.value.trim()
+      });
+      setStore(s);
+      toast('Address saved');
+      renderDash();
+    });
+
+    /* ============================ LINK CUSTOMER RECORD ============================ */
+    async function linkCustomerRecord() {
+      if (!ME) return;
+      try {
+        const r = await sb.from('customers').select('name,phone').ilike('phone', '%' + dig10(ME.phone).slice(-4) + '%');
+        if (r.error) return;
+        const mine = (r.data || []).find(c => dig10(c.phone) === dig10(ME.phone));
+        if (mine) {
+          const s = getStore();
+          s.customerName = mine.name;
+          setStore(s);
+        }
+      } catch (_) { }
+    }
+
+    /* ============================ CONTACT ============================ */
+    $('#contactForm').addEventListener('submit', e => {
+      e.preventDefault();
+      $('#formMsg').style.display = 'block';
+      e.target.reset();
+      toast('Message sent — we will be in touch');
+    });
+
+    /* ============================ BOOT ============================ */
+    (async function boot() {
+      const sess = loadJSON(SESSION_KEY, null);
+      if (sess && sess.phone) ME = sess;
+
+      await sbReady;
+      if (ME) await linkCustomerRecord();
+
+      // company info from DB (also paints cache immediately)
+      await loadCompany();
+
+      await loadProducts();
+      renderProducts();
+      refreshHeader();
+
+      // Re-fetch company info when the tab regains focus, so any change the shop made in the office panel reflects
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) loadCompany();
+      });
+      window.addEventListener('focus', loadCompany);
+    })();
+
+    window.__ayurgra = { openDash, closeDash };
+  })();
+  </script>
+</body>
+</html>
